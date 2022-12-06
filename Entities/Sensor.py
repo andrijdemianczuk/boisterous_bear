@@ -4,6 +4,7 @@ from os import stat, rename
 from datetime import datetime
 
 
+# Offsets will be used for DTS line depth
 def getOffsetDay():
     return {"0": 1.0, "1": 1.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 0.9,
             "6": 0.9}
