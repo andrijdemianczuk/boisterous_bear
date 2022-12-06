@@ -1,16 +1,12 @@
-# This is a sample Python script.
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+#from entities import sHumidity, sProx, sTemp, sLight, sPressure
 
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+        pass
+        # sHumidity.Humidity("temp/", "IoT_Sensor_Template/").run()
+        # sProx.Prox("temp/", "IoT_Sensor_Template/").run()
+        # sTemp.Temp("temp/", "IoT_Sensor_Template/").run()
+        # sLight.Light("temp/", "IoT_Sensor_Template/").run()
+        # sPressure.Pressure("temp/", "IoT_Sensor_Template/").run()
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+        #sHumidity.KHumidity(topic="dev1", bootstrap_servers=['35.86.112.176:9092']).run() #topic name should be something like 'building_iot_humidity'
