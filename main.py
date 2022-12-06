@@ -1,5 +1,6 @@
 
 #from entities import sHumidity, sProx, sTemp, sLight, sPressure
+from Entities import KTemp
 
 if __name__ == '__main__':
         pass
@@ -10,3 +11,4 @@ if __name__ == '__main__':
         # sPressure.Pressure("temp/", "IoT_Sensor_Template/").run()
 
         #sHumidity.KHumidity(topic="dev1", bootstrap_servers=['35.86.112.176:9092']).run() #topic name should be something like 'building_iot_humidity'
+        KTemp.KTemp(topic="dev1", bootstrap_servers=['35.86.112.176:9092']).run()
