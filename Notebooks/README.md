@@ -1,0 +1,1 @@
+This is the default location for all Databricks Notebooks. We can add sub-dirs within.
