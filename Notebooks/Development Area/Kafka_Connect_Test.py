@@ -17,3 +17,16 @@ kafka = (spark.readStream
 read_stream = kafka.select(col("*"))
 
 display(read_stream)
+
+# COMMAND ----------
+
+from pyspark.sql.functions import col
+df = kafka.select(col("value").cast("string").alias("plaintextValue"))
+
+# COMMAND ----------
+
+display(df)
+
+# COMMAND ----------
+
+
