@@ -5,6 +5,7 @@ from Entities import Sensor
 
 class Temp(Sensor.Sensor):
 
+
     def __init__(self, writeLocation: str, srcLocation: str) -> None:
         super().__init__(writeLocation, srcLocation)
         self.srcName = "Temp.csv"
@@ -43,6 +44,7 @@ class Temp(Sensor.Sensor):
 
 
 class KTemp(Sensor.KSensor):
+
 
     def __init__(self, topic: str = "default", bootstrap_servers: [] = 'localhost') -> None:
         super().__init__(topic, bootstrap_servers)

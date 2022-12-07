@@ -3,7 +3,6 @@ from uuid import uuid4
 from os import stat, rename
 from datetime import datetime
 
-
 # Offsets will be used for DTS line depth
 def getOffsetDay():
     return {"0": 1.0, "1": 1.0, "2": 1.0, "3": 1.0, "4": 1.0, "5": 0.9,
@@ -21,6 +20,7 @@ def getOffsetHr():
 
 class Sensor(object):
 
+
     def __init__(self, writeLocation="temp/", srcLocation="IoT_Sensor_Template/") -> None:
         self.srcName = None
         self.newFilePath = None
@@ -35,6 +35,7 @@ class Sensor(object):
         self.offset = self.getOffset(self.epoch_time)
         self.fileRolloverLimitB = 10485760  # 10Mb per file
 
+
     def openFile(self, fp: str) -> object:
         # Params
         self.fileIsEmpty = False
@@ -48,6 +49,7 @@ class Sensor(object):
 
         return f1
 
+
     def getOffset(self, epoch_time) -> float:
         dayOfWeek = datetime.today().weekday()  # used to modify for weekends / non-business days
         d = datetime.fromtimestamp(epoch_time)  # used for random offset by hour-of-day
@@ -58,6 +60,7 @@ class Sensor(object):
         # Rollover the file if it's greater or equal to the limit.
         if stat(self.filePath).st_size >= self.fileRolloverLimitB:
             rename(self.filePath, self.newFilePath)
+
 
     def run(self):
         # Open the file write location
@@ -77,19 +80,24 @@ class Sensor(object):
 
 
 class KSensor(object):
+
+
     def __init__(self, topic: str = "default", bootstrap_servers: [] = 'localhost') -> None:
         self.bootstrap_servers = bootstrap_servers
         self.topic = topic
         self.offsetDay = getOffsetDay()
         self.offsetHr = getOffsetHr()
-        self.guid = str(
-            uuid4())  # not sure if we still need this - we're not doing a file rollover, but might still be useful.
+        # not sure if we still need UUID - we're not doing a file rollover, but might still be useful.
+        self.guid = str(uuid4())
         self.epoch_time = int(time())
         self.offset = self.getOffset(self.epoch_time)
 
     def getOffset(self, epoch_time) -> float:
-        dayOfWeek = datetime.today().weekday()  # used to modify for weekends / non-business days
-        d = datetime.fromtimestamp(epoch_time)  # used for random offset by hour-of-day
+        # used to modify for weekends / non-business days
+        dayOfWeek = datetime.today().weekday()
+
+        # used for random offset by hour-of-day
+        d = datetime.fromtimestamp(epoch_time)
 
         return self.offsetHr[str(d.hour)] * self.offsetDay[str(dayOfWeek)]
 
