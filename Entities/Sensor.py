@@ -28,7 +28,6 @@ def getOffsetDepth() -> object:
 
 class Sensor(object):
 
-
     def __init__(self, writeLocation="temp/", srcLocation="IoT_Sensor_Template/") -> None:
         self.srcName = None
         self.newFilePath = None
@@ -40,9 +39,8 @@ class Sensor(object):
         self.writeLocation = writeLocation
         self.guid = str(uuid4())
         self.epoch_time = int(time())
-        #self.offset = self.getOffset(self.epoch_time)
+        # self.offset = self.getOffset(self.epoch_time)
         self.fileRolloverLimitB = 10485760  # 10Mb per file
-
 
     def openFile(self, fp: str) -> object:
         # Params
@@ -57,7 +55,6 @@ class Sensor(object):
 
         return f1
 
-
     def getOffset(self, epoch_time) -> float:
         dayOfWeek = datetime.today().weekday()  # used to modify for weekends / non-business days
         d = datetime.fromtimestamp(epoch_time)  # used for random offset by hour-of-day
@@ -68,7 +65,6 @@ class Sensor(object):
         # Rollover the file if it's greater or equal to the limit.
         if stat(self.filePath).st_size >= self.fileRolloverLimitB:
             rename(self.filePath, self.newFilePath)
-
 
     def run(self):
         # Open the file write location
@@ -94,46 +90,26 @@ class KSensor(object):
         self.topic = topic
         self.offsetDay = getOffsetDay()
         self.offsetHr = getOffsetHr()
+        self.offset = self.getOffset()
         # not sure if we still need UUID - we're not doing a file rollover, but might still be useful.
         self.guid = str(uuid4())
         self.epoch_time = int(time())
-        self.offset = self.getOffset(self.epoch_time)
 
-    def getOffset(self, epoch_time) -> object:
+    def getOffset(self) -> object:
         # used to modify for weekends / non-business days
         # dayOfWeek = datetime.today().weekday()
         depthOffsetVal = getOffsetDepth()
 
         # used for random offset by hour-of-day
-        d = datetime.fromtimestamp(epoch_time)
+        # d = datetime.fromtimestamp(epoch_time)
 
         # return self.offsetHr[str(d.hour)] * self.offsetDay[str(dayOfWeek)]
         return depthOffsetVal
 
     def run(self):
-        print(f"{self.offset} {self.guid}")
 
-        # Data to be written
-        dictionary = {
-            "time": 1670438897,
-            "0": 1,
-            "1": 2
-        }
-        # Serializing json
-        json_object = json.dumps(dictionary)
-        print(json_object)
+        #print(f"{self.offset} {self.guid}")
+        self.generateStreamSource()
 
-        kafkaProducer = Publish.connect_kafka_producer(bootstrap_servers=self.bootstrap_servers)
-        Publish.publish_message(kafkaProducer, self.topic, 'raw', json_object.strip())
-
-        if kafkaProducer is not None:
-            kafkaProducer.close()
-
-        # testing kafka connectivity - as of Dec. 7, 2022 this works okay
-        # tlist = ['a', 'b', 'c']
-        # kafkaProducer = Publish.connect_kafka_producer(bootstrap_servers=self.bootstrap_servers)
-        # for t in tlist:
-        #     Publish.publish_message(kafkaProducer, self.topic, 'raw', t.strip())
-
-        # if kafkaProducer is not None:
-        #     kafkaProducer.close()
+    def generateStreamSource(self):
+        pass

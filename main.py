@@ -9,7 +9,8 @@ if __name__ == '__main__':
     # sPressure.Pressure("temp/", "IoT_Sensor_Template/").run()
 
     try:
-        KTemp.KTemp(topic="dev1", bootstrap_servers=['35.86.112.176:9092']).run()
+        KTemp.KTemp(topic="dev1", bootstrap_servers=['35.86.112.176:9092'], deg_min=15, deg_max=200,
+                    seg_count=1700).run()
 
     except Exception as ex:
         print('Exception in main method message')
