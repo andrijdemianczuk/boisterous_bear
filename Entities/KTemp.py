@@ -60,64 +60,65 @@ class KTemp(Sensor.KSensor):
 
     def generateStreamSource(self):
 
-        # Test data to be written
-        dictionary = {
-            "timestamp": time.time(),
-            "well": 1
-        }
+        for w in range(0, self.well_count):
+            # Test data to be written
+            dictionary = {
+                "timestamp": time.time(),
+                "well": "01-0" + str(w) + "P",
+                "coordinates": "51.048615,-114.070847"
+            }
 
-        i, j = 1, 1
-        while i <= self.seg_count:
-            k = ("seg_" + str(i))
-            if i < 20:
-                v = 40
-            elif i < 100:
-                v = 15
-            elif i < 200:
-                v = 60
-            elif i < 300:
-                v = 90
-            elif i < 400:
-                v = 95
-            elif i < 500:
-                v = 100
-            elif i < 600:
-                v = 105
-            elif i < 700:
-                v = 100
-            elif i < 800:
-                v = 95
-            elif i < 900:
-                v = 190
-            elif i < 1000:
-                v = 160
-            elif i < 1100:
-                v = 120
-            elif i < 1200:
-                v = 100
-            elif i < 1300:
-                v = 60
-            elif i < 1400:
-                v = 40
-            elif i < 1500:
-                v = 40
-            elif i < 1600:
-                v = 50
-            else:
-                v = 55
-            i += 1
-            j += 1
-            dictionary[k] = v
+            for i in range(0,1700):
+                k = ("seg_" + str(i))
+                if i < 20:
+                    v = 40
+                elif i < 100:
+                    v = 15
+                elif i < 200:
+                    v = 60
+                elif i < 300:
+                    v = 90
+                elif i < 400:
+                    v = 95
+                elif i < 500:
+                    v = 100
+                elif i < 600:
+                    v = 105
+                elif i < 700:
+                    v = 100
+                elif i < 800:
+                    v = 95
+                elif i < 900:
+                    v = 190
+                elif i < 1000:
+                    v = 160
+                elif i < 1100:
+                    v = 120
+                elif i < 1200:
+                    v = 100
+                elif i < 1300:
+                    v = 60
+                elif i < 1400:
+                    v = 40
+                elif i < 1500:
+                    v = 40
+                elif i < 1600:
+                    v = 50
+                else:
+                    v = 55
+                dictionary[k] = v
 
-        # Serializing json
-        json_object = json.dumps(dictionary)
-        #print(json_object) #Debug only
+            # Serializing json
+            json_object = json.dumps(dictionary)
+            print(json_object)  # Debug only
 
-        kafkaProducer = Publish.connect_kafka_producer(bootstrap_servers=self.bootstrap_servers)
-        Publish.publish_message(kafkaProducer, self.topic, 'raw', json_object)
+            kafkaProducer = Publish.connect_kafka_producer(bootstrap_servers=self.bootstrap_servers)
+            # Publish.publish_message(kafkaProducer, self.topic, 'raw', json_object)
 
-        if kafkaProducer is not None:
-            kafkaProducer.close()
+            if kafkaProducer is not None:
+                kafkaProducer.close()
+
+            time.sleep(1)
 
         # testing kafka connectivity - as of Dec. 7, 2022 this works okay
         # tlist = ['a', 'b', 'c']
