@@ -113,7 +113,7 @@ class KTemp(Sensor.KSensor):
             print(json_object)  # Debug only
 
             kafkaProducer = Publish.connect_kafka_producer(bootstrap_servers=self.bootstrap_servers)
-            # Publish.publish_message(kafkaProducer, self.topic, 'raw', json_object)
+            Publish.publish_message(kafkaProducer, self.topic, 'raw', json_object)
 
             if kafkaProducer is not None:
                 kafkaProducer.close()
