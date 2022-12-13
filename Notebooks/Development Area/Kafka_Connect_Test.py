@@ -1,9 +1,9 @@
 # Databricks notebook source
 from pyspark.sql.functions import *
 
-startingOffsets = "earliest" 
+startingOffsets = "latest" 
 kafka_bootstrap_servers_plaintext = "35.86.112.176:9092"
-topic = "dev1"
+topic = "dts-test1"
 
 kafka = (spark.readStream
   .format("kafka")
@@ -26,7 +26,3 @@ df = kafka.select(col("value").cast("string").alias("plaintextValue"))
 # COMMAND ----------
 
 display(df)
-
-# COMMAND ----------
-
-
