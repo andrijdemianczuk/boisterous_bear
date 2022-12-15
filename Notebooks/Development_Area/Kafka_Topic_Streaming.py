@@ -36,9 +36,8 @@ kafka = (spark.readStream
   .option("startingOffsets", startingOffsets )
   .load())
 
-#read to dataframe for parsing
-read_stream = kafka.select(col("value"))
-df = kafka.select(col("value").cast("string").alias("plaintextValue"))
+#read stream to dataframe for parsing
+read_stream = kafka.select(col("key").cast("string").alias("eventId"), from_json(col("value").cast("string"), schema).alias("json")).select("json.*").select("timestamp", "well", "coordinates", df.colRegex("`^seg.*`"))
 
 # COMMAND ----------
 
@@ -48,20 +47,9 @@ path = "/FileStore/Users/andrij.demianczuk@databricks.com/tmp/kafka"
 checkpointPath = "/FileStore/Users/andrij.demianczuk@databricks.com/tmp/kafka_cp"
 
 #stream to unbounded table called ad_dts_raw
-df.writeStream.format("delta").outputMode("append").option("checkpointLocation", checkpointPath).toTable("field_demos.canwest_sa.ad_dts_raw")
+read_stream.writeStream.format("delta").outputMode("append").option("checkpointLocation", checkpointPath).toTable("field_demos.canwest_sa.ad_dts_json")
 
 # COMMAND ----------
 
-df1 = spark.table("field_demos.canwest_sa.ad_dts_raw")
-
-# COMMAND ----------
-
-df2 = df1.withColumn('json', from_json(col('plaintextValue'), schema))
-
-# COMMAND ----------
-
-df2 = df2.select("json.*")
-
-# COMMAND ----------
-
-display(df2.select("timestamp", "well", "coordinates", df2.colRegex("`^seg.*`")))
+# DBTITLE 1,Table Read
+df = spark.table("field_demos.canwest_sa.ad_dts_json").select("timestamp", "well", "coordinates", df.colRegex("`^seg.*`"))
