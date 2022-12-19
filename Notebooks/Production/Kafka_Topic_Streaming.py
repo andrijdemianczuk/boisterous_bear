@@ -3,6 +3,8 @@
 # MAGIC ### Reference docs:
 # MAGIC * [Ploty 3d scatter plot](https://docs.databricks.com/notebooks/visualizations/plotly.html)
 # MAGIC * [Arbitrary files from repos](https://docs.databricks.com/repos/work-with-notebooks-other-files.html#programmatically-read-files-from-a-repo)
+# MAGIC * [3D surface plot](https://plotly.com/python/3d-surface-plots/)
+# MAGIC * [3D scatter plot]()
 
 # COMMAND ----------
 
@@ -37,7 +39,7 @@ kafka = (spark.readStream
   .load())
 
 #read stream to dataframe for parsing
-read_stream = kafka.select(col("key").cast("string").alias("eventId"), from_json(col("value").cast("string"), schema).alias("json")).select("json.*").select("timestamp", "well", "coordinates", df.colRegex("`^seg.*`"))
+read_stream = kafka.select(col("key").cast("string").alias("eventId"), from_json(col("value").cast("string"), schema).alias("json")).select("json.*").select("timestamp", "well", "coordinates", kafka.colRegex("`^seg.*`"))
 
 # COMMAND ----------
 
@@ -52,4 +54,20 @@ read_stream.writeStream.format("delta").outputMode("append").option("checkpointL
 # COMMAND ----------
 
 # DBTITLE 1,Table Read
-df = spark.table("field_demos.canwest_sa.ad_dts_json").select("timestamp", "well", "coordinates", df.colRegex("`^seg.*`"))
+df = spark.table("field_demos.canwest_sa.ad_dts_json").select("timestamp", "well", "coordinates", read_stream.colRegex("`^seg.*`"))
+
+# COMMAND ----------
+
+df = df.withColumn("timestamp", col("timestamp").cast("TimeStamp")).orderBy(col("timestamp").desc())
+
+# COMMAND ----------
+
+display(df)
+
+# COMMAND ----------
+
+display(df.melt(ids=["timestamp","well", "coordinates"], values=["seg_0", "seg_1", "seg_2"], variableColumnName="key", valueColumnName="val"))
+
+# COMMAND ----------
+
+
