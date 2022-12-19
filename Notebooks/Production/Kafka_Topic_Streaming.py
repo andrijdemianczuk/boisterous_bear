@@ -66,8 +66,4 @@ display(df)
 
 # COMMAND ----------
 
-display(df.melt(ids=["timestamp","well", "coordinates"], values=["seg_0", "seg_1", "seg_2"], variableColumnName="key", valueColumnName="val"))
-
-# COMMAND ----------
-
-
+display(df.melt(ids=["timestamp","well", "coordinates"], values=df.colRegex("`^seg.*`"), variableColumnName="segment", valueColumnName="temp"))
