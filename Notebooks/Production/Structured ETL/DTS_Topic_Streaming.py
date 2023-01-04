@@ -12,6 +12,8 @@
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
 
+from DeltaMgr import DeltaMgr
+
 import sys
 import os
 
@@ -36,6 +38,7 @@ kafka = (spark.readStream
   .option("kafka.bootstrap.servers", kafka_bootstrap_servers_plaintext ) 
   .option("subscribe", topic )
   .option("startingOffsets", startingOffsets )
+  .option("failOnDataLoss", False)
   .load())
 
 #read stream to dataframe for parsing
@@ -50,20 +53,3 @@ checkpointPath = "/FileStore/Users/andrij.demianczuk@databricks.com/tmp/kafka_cp
 
 #stream to unbounded table called ad_dts_raw
 read_stream.writeStream.format("delta").outputMode("append").option("checkpointLocation", checkpointPath).toTable("field_demos.canwest_sa.ad_dts_json")
-
-# COMMAND ----------
-
-# DBTITLE 1,Table Read
-df = spark.table("field_demos.canwest_sa.ad_dts_json").select("timestamp", "well", "coordinates", read_stream.colRegex("`^seg.*`"))
-
-# COMMAND ----------
-
-df = df.withColumn("timestamp", col("timestamp").cast("TimeStamp")).orderBy(col("timestamp").desc())
-
-# COMMAND ----------
-
-display(df)
-
-# COMMAND ----------
-
-display(df.melt(ids=["timestamp","well", "coordinates"], values=df.colRegex("`^seg.*`"), variableColumnName="segment", valueColumnName="temp"))
