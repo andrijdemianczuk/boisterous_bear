@@ -25,7 +25,7 @@ dts_df = spark.table("field_demos.canwest_sa.ad_dts_silver").filter(F.col("well"
 
 # COMMAND ----------
 
-pdf = dts_df.sort(F.col("timestamp").desc()).limit(10).drop("timestamp").toPandas()
+pdf = dts_df.sort(F.col("timestamp").desc()).limit(60).drop("timestamp").toPandas()
 
 # COMMAND ----------
 
