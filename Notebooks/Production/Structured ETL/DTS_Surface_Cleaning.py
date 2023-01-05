@@ -42,7 +42,3 @@ fig.update_layout(title='DTS 10-hr History - Well 01-01P',
                             ))
 
 fig.show()
-
-# COMMAND ----------
-
-
