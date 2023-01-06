@@ -115,14 +115,14 @@ class KTemp(Sensor.KSensor):
             json_object = json.dumps(dictionary)
 
             # print(self.getOffset(epoch_time=self.time))
-            print(json_object)  # Debug only
+            #print(json_object)  # Debug only
 
-            # kafkaProducer = Publish.connect_kafka_producer(bootstrap_servers=self.bootstrap_servers)
-            # Publish.publish_message(kafkaProducer, self.topic, 'raw', json_object)
-            #
-            # if kafkaProducer is not None:
-            #     kafkaProducer.close()
-            #
+            kafkaProducer = Publish.connect_kafka_producer(bootstrap_servers=self.bootstrap_servers)
+            Publish.publish_message(kafkaProducer, self.topic, 'raw', json_object)
+
+            if kafkaProducer is not None:
+                kafkaProducer.close()
+
 
             time.sleep(1)
 
