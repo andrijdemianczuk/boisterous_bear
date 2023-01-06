@@ -57,8 +57,11 @@ class KTemp(Sensor.KSensor):
         self.deg_max = deg_max
         self.seg_count = seg_count
         self.well_count = well_count
+        self.time = int(time.time())
 
     def generateStreamSource(self):
+
+        offsetVal = self.getOffset(epoch_time=self.time)
 
         for w in range(0, self.well_count):
             # Test data to be written
@@ -73,43 +76,45 @@ class KTemp(Sensor.KSensor):
                 if i < 20:
                     v = 40
                 elif i < 100:
-                    v = 15
+                    v = round(random.randint(15, 22) * (1.4 * offsetVal), 4)
                 elif i < 200:
-                    v = 60
+                    v = round(random.randint(50, 63) * (1.4 * offsetVal), 4)
                 elif i < 300:
-                    v = 90
+                    v = round(random.randint(87, 91) * (1.4 * offsetVal), 4)
                 elif i < 400:
-                    v = 95
+                    v = round(random.randint(90, 99) * (1.4 * offsetVal), 4)
                 elif i < 500:
-                    v = 100
+                    v = round(random.randint(97, 105) * (1.4 * offsetVal), 4)
                 elif i < 600:
-                    v = 105
+                    v = round(random.randint(103, 107) * (1.5 * offsetVal), 4)
                 elif i < 700:
-                    v = 100
+                    v = round(random.randint(97, 102) * (1.5 * offsetVal), 4)
                 elif i < 800:
-                    v = 95
+                    v = round(random.randint(93, 97) * (1.5 * offsetVal), 4)
                 elif i < 900:
-                    v = 190
+                    v = round(random.randint(180, 200) * (1.7 * offsetVal), 4)
                 elif i < 1000:
-                    v = 160
+                    v = round(random.randint(155, 180) * (1.7 * offsetVal), 4)
                 elif i < 1100:
-                    v = 120
+                    v = round(random.randint(117, 127) * (1.8 * offsetVal), 4)
                 elif i < 1200:
-                    v = 100
+                    v = round(random.randint(93, 103) * (1.7 * offsetVal), 4)
                 elif i < 1300:
-                    v = 60
+                    v = round(random.randint(57, 61) * (1.7 * offsetVal), 4)
                 elif i < 1400:
-                    v = 40
+                    v = round(random.randint(37, 42) * (1.6 * offsetVal), 4)
                 elif i < 1500:
-                    v = 40
+                    v = round(random.randint(35, 40) * (1.5 * offsetVal), 4)
                 elif i < 1600:
-                    v = 50
+                    v = round(random.randint(45, 51) * (1.5 * offsetVal), 4)
                 else:
-                    v = 55
+                    v = round(random.randint(49, 57) * (1.5 * offsetVal), 4)
                 dictionary[k] = v
 
             # Serializing json
             json_object = json.dumps(dictionary)
+
+            # print(self.getOffset(epoch_time=self.time))
             print(json_object)  # Debug only
 
             # kafkaProducer = Publish.connect_kafka_producer(bootstrap_servers=self.bootstrap_servers)

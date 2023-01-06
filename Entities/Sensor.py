@@ -153,25 +153,16 @@ class KSensor(object):
         self.topic = topic
         self.offsetDay = getOffsetDay()
         self.offsetHr = getOffsetHr()
-        self.offset = self.getOffset()
+        self.offsetMin = getOffsetMin()
         # not sure if we still need UUID - we're not doing a file rollover, but might still be useful.
         self.guid = str(uuid4())
-        self.epoch_time = int(time())
 
-    def getOffset(self) -> object:
-        # used to modify for weekends / non-business days
-        # dayOfWeek = datetime.today().weekday()
-        depthOffsetVal = getOffsetDepth()
-
-        # used for random offset by hour-of-day
-        # d = datetime.fromtimestamp(epoch_time)
-
-        # return self.offsetHr[str(d.hour)] * self.offsetDay[str(dayOfWeek)]
-        return depthOffsetVal
+    def getOffset(self, epoch_time) -> int:
+        # used for random offset by minute-of-hour
+        d = datetime.fromtimestamp(epoch_time)
+        return self.offsetMin[str(d.minute)]
 
     def run(self):
-
-        #print(f"{self.offset} {self.guid}")
         self.generateStreamSource()
 
     def generateStreamSource(self):
