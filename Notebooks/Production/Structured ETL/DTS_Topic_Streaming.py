@@ -21,7 +21,7 @@ import os
 
 # DBTITLE 1,Topic Schema
 #Load the sample event to infer the schema
-sampleDF = spark.read.format("json").load(f"file:{os.getcwd()}/dts-test1.json")
+sampleDF = spark.read.format("json").load(f"file:{os.getcwd()}/dts-test2.json")
 schema = sampleDF.schema.json()
 
 # COMMAND ----------
@@ -30,7 +30,7 @@ schema = sampleDF.schema.json()
 #params
 startingOffsets = "latest" 
 kafka_bootstrap_servers_plaintext = "35.86.112.176:9092"
-topic = "dts-test1"
+topic = "dts-pad1"
 
 #open stream
 kafka = (spark.readStream

@@ -31,7 +31,7 @@ from pyspark.sql.types import IntegerType
 
 # COMMAND ----------
 
-df = spark.table("hive_metastore.ademianczuk.ad_dlt_dts_seq").filter(F.col("well") == "01-01P").drop("well","coordinates")
+df = spark.table("hive_metastore.ademianczuk.ad_dlt_dts2_seq").filter(F.col("well") == "01-01P").drop("well","coordinates")
 pdf = df.sort(F.col("timestamp").desc()).limit(60).drop("timestamp").toPandas()
 
 # COMMAND ----------
@@ -53,7 +53,7 @@ pdf = df.sort(F.col("timestamp").desc()).limit(60).drop("timestamp").toPandas()
 # MAGIC 
 # MAGIC ### Taking a singular point-in-time representation of the demo data
 # MAGIC 
-# MAGIC Before we add the time dimension to the data, we will do a quick render based on the melted data to preview what our line graph looks like with the simulated data.
+# MAGIC Before we add the time dimension to the data, we will do a quick render based on the melted data to preview what our line graph looks like with the simulated data before we factor in any offsets. The following graph is a timeseries chart representing the segments we identified in the above time series graph to demonstrate segmentation.
 
 # COMMAND ----------
 
@@ -80,6 +80,8 @@ display(samp)
 # MAGIC Since we removed a lot of the logic used to clean, munge and organize our data out to the DLT pipeline we now just need to focus on the presentation of the data. Since we are concerned with analyzing the data across three dimensions (segment length, temperature and time) we can easily transform the data to a vector that can be rendered by the plotly library.
 # MAGIC 
 # MAGIC For the sake of this demo, we are zeroing in on a single well on pad 01. This can also easily be parameterized if need be.
+# MAGIC 
+# MAGIC Note that this surface map represents the segmented values after the offset was applied.
 
 # COMMAND ----------
 
@@ -96,3 +98,7 @@ fig.update_layout(title='DTS 10-hr History - Well 01-01P',
                             ))
 
 fig.show()
+
+# COMMAND ----------
+
+df = spark.table("hive_metastore.ademianczuk.ad_dlt_dts_seq").filter(F.col("well") == "01-01P")
