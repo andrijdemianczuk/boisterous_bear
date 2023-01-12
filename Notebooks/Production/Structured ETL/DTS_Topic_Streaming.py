@@ -52,4 +52,4 @@ path = "/FileStore/Users/andrij.demianczuk@databricks.com/tmp/kafka"
 checkpointPath = "/FileStore/Users/andrij.demianczuk@databricks.com/tmp/kafka_cp"
 
 #stream to unbounded table called ad_dts_raw
-read_stream.writeStream.format("delta").outputMode("append").option("checkpointLocation", checkpointPath).toTable("field_demos.canwest_sa.ad_dts_json")
+read_stream.writeStream.format("delta").outputMode("append").option("checkpointLocation", checkpointPath).toTable("field_demos.canwest_sa.ad_dts2_json")

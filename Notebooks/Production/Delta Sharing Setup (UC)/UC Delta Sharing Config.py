@@ -81,6 +81,18 @@
 # COMMAND ----------
 
 # MAGIC %sql
+# MAGIC 
+# MAGIC ALTER SHARE ademianczuk_dts_external
+# MAGIC ADD TABLE field_demos.canwest_sa.ad_dlt_dts2_daily_temps
+# MAGIC AS ademianczuk_dts_external.dts_open_daily_avg;
+# MAGIC 
+# MAGIC ALTER SHARE ademianczuk_dts_external
+# MAGIC ADD TABLE field_demos.canwest_sa.ad_dlt_dts2_aggs
+# MAGIC AS ademianczuk_dts_external.dts_open_aggs
+
+# COMMAND ----------
+
+# MAGIC %sql
 # MAGIC SHOW ALL IN SHARE ademianczuk_dts_external
 
 # COMMAND ----------

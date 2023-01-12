@@ -8,7 +8,7 @@ import os
 # COMMAND ----------
 
 # DBTITLE 1,Read the table into a dataframe
-df = spark.table("field_demos.canwest_sa.ad_dts_json")
+df = spark.table("field_demos.canwest_sa.ad_dts2_json")
 df = df.select("timestamp", "well", "coordinates", df.colRegex("`^seg.*`")).withColumn("timestamp", col("timestamp").cast("TimeStamp")).orderBy(col("timestamp").desc())
 
 # COMMAND ----------
@@ -30,11 +30,11 @@ pivotDF = pivotDF.withColumn("sha2", sha2(concat_ws("", col("timestamp"), col("w
 # COMMAND ----------
 
 # DBTITLE 1,Write to Delta
-pivotDF.write.format('delta').option("mergeSchema", "true").partitionBy("well").mode('overwrite').saveAsTable("field_demos.canwest_sa.ad_dts_melted_silver")
+pivotDF.write.format('delta').option("mergeSchema", "true").partitionBy("well").mode('overwrite').saveAsTable("field_demos.canwest_sa.ad_dts2_melted_silver")
 
 # COMMAND ----------
 
 # DBTITLE 1,Optimize
 from delta.tables import *
-deltaTable = DeltaTable.forName(spark, "field_demos.canwest_sa.ad_dts_melted_silver")
+deltaTable = DeltaTable.forName(spark, "field_demos.canwest_sa.ad_dts2_melted_silver")
 deltaTable.optimize().executeCompaction()

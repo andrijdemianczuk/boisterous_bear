@@ -3,7 +3,7 @@ from pyspark.sql import functions as F
 
 # COMMAND ----------
 
-df = spark.table("field_demos.canwest_sa.ad_dts_json")
+df = spark.table("field_demos.canwest_sa.ad_dts2_json")
 
 # COMMAND ----------
 

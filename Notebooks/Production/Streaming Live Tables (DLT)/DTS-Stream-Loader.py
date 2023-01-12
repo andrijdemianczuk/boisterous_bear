@@ -38,6 +38,7 @@ startingOffsets = spark.conf.get("startingOffsets")
 
 from pyspark.sql.functions import *
 from pyspark.sql.types import *
+from pyspark.sql.window import *
 
 #redundant but required for column reorg as a discrete namespace
 from pyspark.sql import functions as F
@@ -127,4 +128,40 @@ def ad_dlt_dts2_melted():
   df = df.melt(ids=["timestamp","well", "coordinates"], values=df.colRegex("`^seg.*`"), variableColumnName="segment", valueColumnName="temp")
   df = df.withColumn("sha2", sha2(concat_ws("", col("timestamp"), col("well"), col("segment")), 256))
   
+  return df
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## Live Table 4: Daily average of temps by segment
+# MAGIC 
+# MAGIC A rolling value by average for each segment by well. This is constantly updated for values only for today.
+
+# COMMAND ----------
+
+@dlt.table(comment="Summary of the current day daily temp averages by well and segment. Only contains today's data", table_properties={"pipelines.reset.allowed": "true"})
+def ad_dlt_dts2_daily_temps():
+  df = dlt.readStream("ad_dlt_dts2_melted").filter(col('timestamp') >= date_sub(current_date(), 0))
+  return df.groupBy("well", "segment").agg(avg("temp").alias("avg_temp"))
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC ## Live Table 5: Aggregations & Windows
+# MAGIC 
+# MAGIC Let's now work out a sliding window aggregations. What we want to do here is have a 10-minute sliding window run every 5-minutes. This is handy because it acts as a simple moving average which helps normalize trends.
+# MAGIC 
+# MAGIC e.g.,
+# MAGIC 
+# MAGIC <img src="https://www.databricks.com/wp-content/uploads/2017/05/mapping-of-event-time-to-overlapping-windows-of-length-10-mins-and-sliding-interval-5-mins.png" width=750/>
+
+# COMMAND ----------
+
+@dlt.table(comment="Statistical aggregrations table", table_properties={"pipelines.reset.allowed": "true"})
+def ad_dlt_dts2_aggs():
+  df = dlt.readStream("ad_dlt_dts2_melted")
+  df = (df.groupBy("well", "segment", window("timestamp", "10 minutes", "5 minutes"))
+        .agg(stddev("temp").alias("stddev_temp"), avg("temp").alias("avg_temp"), min("temp").alias("min_temp"),max("temp").alias("max_temp"))
+        .orderBy(col("window.start")))
   return df
