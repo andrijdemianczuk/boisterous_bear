@@ -36,7 +36,7 @@ df.write.format('delta').option("mergeSchema", "true").partitionBy("well").mode(
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ### Window (avg, mean, med, max & min) by depth (segment) over time
 
 # COMMAND ----------
@@ -60,7 +60,7 @@ df.withColumn("avg", avg(col("temp")).over(windowSpec)).withColumn("min", min(co
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## Time-based Windows
 
 # COMMAND ----------
@@ -76,7 +76,3 @@ windowedDF = df.groupBy("segment", window("timestamp", "10 minutes", "5 minutes"
 display(df.groupBy("well", "segment", window("timestamp", "10 minutes", "5 minutes")) 
         .agg(stddev("temp").alias("stddev_temp"), avg("temp").alias("avg_temp"), min("temp").alias("min_temp"), max("temp").alias("max_temp")) \
         .orderBy(col("window.start")))
-
-# COMMAND ----------
-
-

@@ -2,20 +2,20 @@
 # MAGIC %md
 # MAGIC # SAGD DTS Sensor Demo
 # MAGIC <!-- img src="https://github.com/andrijdemianczuk/boisterous_bear/blob/098be814f5cc945d2ab3e53958679593411f98eb/Notebooks/Production/Streaming%20Live%20Tables%20(DLT)/web.glasfaserkabel.jpeg" / -->
-# MAGIC <img src="/files/Users/andrij.demianczuk@databricks.com/resources/web_glasfaserkabel.jpeg" />
+# MAGIC <img src="https://github.com/andrijdemianczuk/boisterous_bear/blob/main/Notebooks/Production/Streaming%20Live%20Tables%20(DLT)/web.glasfaserkabel.jpeg?raw=true" />
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Disclaimer
-# MAGIC 
+# MAGIC
 # MAGIC This project is for demonstration purposes only. All data is artificially generated and a gross simulated representation of a data feed. No actual field data is used in this demonstration.
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC ## Input Definition
-# MAGIC 
+# MAGIC
 # MAGIC Here we will use the DLT UI to help us define the input parameters:
 # MAGIC * Bootstrap Servers: The collection of Kafka brokers that we will be listening to for events
 # MAGIC * Topic: The specific topic we are interested in. This is defined on the Kafka cluster by Zookeeper
@@ -31,7 +31,7 @@ startingOffsets = spark.conf.get("startingOffsets")
 
 # MAGIC %md
 # MAGIC ## Dependencies
-# MAGIC 
+# MAGIC
 # MAGIC Here we will declare all of our library dependencies. It's generally considered best practice to keep these all together somewhere in the notebook to make for easy reference.
 
 # COMMAND ----------
@@ -48,9 +48,9 @@ import dlt, json, sys, os
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## Live Table 1: The Landing Table
-# MAGIC 
+# MAGIC
 # MAGIC For the sake of idempotency later on, it's important to trap the data in it's raw state. This reduces the likelihood of error down the road and reduces the need to subscribe and tap the stream multiple times. In this example, the landing table contains the compressed stream data, including the checkpoint offset.
 
 # COMMAND ----------
@@ -72,7 +72,7 @@ def ad_dlt_dts2_raw():
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## Live Table 2: The Parsed Data
 # MAGIC This table includes the parsed fields from the binary column from the kafka stream. This is where we define and explode our columns from the converted JSON default.
 
@@ -82,7 +82,7 @@ def ad_dlt_dts2_raw():
 def ad_dlt_dts2_parsed():
   
   #Define the schema from the sample file
-  sampleDF = spark.read.format("json").load(f"dbfs:/FileStore/Users/andrij.demianczuk@databricks.com/resources/dts_test2.json")
+  sampleDF = spark.read.format("json").load(f"dbfs:/Users/andrij.demianczuk@databricks.com/resources/dts_test2.json")
   schema = sampleDF.schema.json()
   
   #Read the stream from the upstream live table
@@ -114,7 +114,7 @@ def ad_dlt_dts2_seq():
 
 # MAGIC %md
 # MAGIC ## Live Table 3b: un-table the segment columns to reduce dimensionality
-# MAGIC 
+# MAGIC
 # MAGIC Untabling / Unpivoting or melting the dataframe is an important step if we want to evolve the data for reporting purposes. Especially when we start considering data partitioning, it's much more practical to chunk data based on column criteria.
 
 # COMMAND ----------
@@ -134,7 +134,7 @@ def ad_dlt_dts2_melted():
 
 # MAGIC %md
 # MAGIC ## Live Table 4: Daily average of temps by segment
-# MAGIC 
+# MAGIC
 # MAGIC A rolling value by average for each segment by well. This is constantly updated for values only for today.
 
 # COMMAND ----------
@@ -147,13 +147,13 @@ def ad_dlt_dts2_daily_temps():
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC 
+# MAGIC
 # MAGIC ## Live Table 5: Aggregations & Windows
-# MAGIC 
+# MAGIC
 # MAGIC Let's now work out a sliding window aggregations. What we want to do here is have a 10-minute sliding window run every 5-minutes. This is handy because it acts as a simple moving average which helps normalize trends.
-# MAGIC 
+# MAGIC
 # MAGIC e.g.,
-# MAGIC 
+# MAGIC
 # MAGIC <img src="https://www.databricks.com/wp-content/uploads/2017/05/mapping-of-event-time-to-overlapping-windows-of-length-10-mins-and-sliding-interval-5-mins.png" width=750/>
 
 # COMMAND ----------
